@@ -1,13 +1,16 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const path = require('path');
+
+// Load env vars from the backend directory
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
 const morgan = require('morgan');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/error');
 
-// Load env vars
-dotenv.config();
 
 // Connect to database
 connectDB();
