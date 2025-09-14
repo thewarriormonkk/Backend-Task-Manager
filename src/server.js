@@ -1,9 +1,11 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const path = require('path');
 
-// Load env vars from the backend directory
-dotenv.config({ path: path.join(__dirname, '../.env') });
+// Only load .env file in development, use Railway env vars in production
+if (process.env.NODE_ENV !== 'production') {
+  const path = require('path');
+  dotenv.config({ path: path.join(__dirname, '../.env') });
+}
 
 const morgan = require('morgan');
 const cors = require('cors');
