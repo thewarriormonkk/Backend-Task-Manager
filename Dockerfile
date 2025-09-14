@@ -1,3 +1,4 @@
+
 # Use the official Node.js runtime as the base image
 FROM node:18-alpine
 
@@ -12,6 +13,9 @@ RUN npm ci --only=production
 
 # Copy the rest of the application code
 COPY . .
+
+# Remove .env file to force using Railway environment variables
+RUN rm -f .env
 
 # Create a non-root user to run the app
 RUN addgroup -g 1001 -S nodejs
