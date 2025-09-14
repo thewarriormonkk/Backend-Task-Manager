@@ -36,10 +36,20 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Enable CORS
+const corsOrigin = process.env.CLIENT_URL || 'https://frontend-task-manager-assignment-mb.vercel.app';
+console.log('CORS Origin:', corsOrigin);
+console.log('CLIENT_URL env var:', process.env.CLIENT_URL);
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173', // Default Vite port
+  origin: corsOrigin,
   credentials: true
 }));
+
+// Add request logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - Origin: ${req.get('Origin') || 'No Origin'}`);
+  next();
+});
 
 // Mount routers
 app.use('/api/users', userRoutes);
