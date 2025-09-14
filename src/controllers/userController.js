@@ -7,8 +7,19 @@ exports.registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Check if user already exists
-    const userExists = await User.findOne({ email });
+    // Validate required fields
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide name, email, and password'
+      });
+    }
+
+    // Normalize email to lowercase for case-insensitive comparison
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user already exists (case-insensitive)
+    const userExists = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
     if (userExists) {
       return res.status(400).json({
         success: false,
@@ -16,18 +27,37 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    // Create user
+    // Create user with normalized email
     const user = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       password
     });
 
     sendTokenResponse(user, 201, res);
   } catch (error) {
+    console.error('Registration error:', error);
+    
+    // Handle specific MongoDB errors
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email already registered'
+      });
+    }
+    
+    // Handle validation errors
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message);
+      return res.status(400).json({
+        success: false,
+        message: messages.join(', ')
+      });
+    }
+
     res.status(500).json({
       success: false,
-      message: error.message
+      message: 'Registration failed. Please try again.'
     });
   }
 };
@@ -47,8 +77,11 @@ exports.loginUser = async (req, res) => {
       });
     }
 
-    // Check for user
-    const user = await User.findOne({ email }).select('+password');
+    // Normalize email to lowercase for case-insensitive login
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check for user (case-insensitive)
+    const user = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } }).select('+password');
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -67,9 +100,10 @@ exports.loginUser = async (req, res) => {
 
     sendTokenResponse(user, 200, res);
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({
       success: false,
-      message: error.message
+      message: 'Login failed. Please try again.'
     });
   }
 };
