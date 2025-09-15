@@ -34,7 +34,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Enable CORS
-const corsOrigin = process.env.CLIENT_URL || 'https://frontend-task-manager-assignment-mb.vercel.app';
+const corsOrigin = process.env.CLIENT_URL || 'https://frontend-task-manager-olive.vercel.app';
 console.log('CLIENT_URL env var:', process.env.CLIENT_URL);
 console.log('CORS Origin:', corsOrigin);
 
