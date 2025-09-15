@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const connectDB = async () => {
   try {
     const mongoUri = process.env.MONGO_URI;
+    console.log('MONGO_URI env var:', mongoUri ? 'Set' : 'Not set');
     if (!mongoUri) {
       console.error('MONGO_URI environment variable is required');
       process.exit(1);

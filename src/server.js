@@ -34,11 +34,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Enable CORS
-const corsOrigin = process.env.CLIENT_URL;
-if (!corsOrigin) {
-  console.error('CLIENT_URL environment variable is required');
-  process.exit(1);
-}
+const corsOrigin = process.env.CLIENT_URL || 'https://frontend-task-manager-assignment-mb.vercel.app';
+console.log('CLIENT_URL env var:', process.env.CLIENT_URL);
 console.log('CORS Origin:', corsOrigin);
 
 app.use(cors({
@@ -79,11 +76,8 @@ app.get('/health', (req, res) => {
 app.use(errorHandler);
 
 // Start server
-const PORT = process.env.PORT;
-if (!PORT) {
-  console.error('PORT environment variable is required');
-  process.exit(1);
-}
+const PORT = process.env.PORT || 5000;
+console.log('PORT env var:', process.env.PORT);
 
 const server = app.listen(
   PORT,
